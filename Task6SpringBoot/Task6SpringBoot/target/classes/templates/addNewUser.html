@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New User</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2e2e2e; /* Серый цвет фона */
+        }
+        .form-container {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff; /* Белый фон для контейнера */
+        }
+        h1 {
+            margin-bottom: 20px;
+            color: black; /* Цвет заголовка */
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: black; /* Черный цвет текста */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc; /* Серый цвет границы */
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        /* Перемещение кнопки влево */
+        .button-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1>Add New User</h1>
+    <form th:action="@{/saveUser}" th:object="${user}" method="post">
+        <label for="name">Name:</label>
+        <input type="text" id="name" th:field="*{name}" />
+        <div th:if="${#fields.hasErrors('name')}" class="error" th:errors="*{name}">Invalid name</div>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" th:field="*{lastName}" />
+        <div th:if="${#fields.hasErrors('lastName')}" class="error" th:errors="*{lastName}">Invalid last name</div>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" th:field="*{phoneNumber}" />
+        <div th:if="${#fields.hasErrors('phoneNumber')}" class="error" th:errors="*{phoneNumber}">Invalid phone number</div>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" th:field="*{email}" />
+        <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}">Invalid email</div>
+
+        <div class="button-container">
+            <button type="submit">Save</button>
+        </div>
+    </form>
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+</div>
+</body>
+</html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit User</title>
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #2e2e2e; /* Серый цвет фона */
+        }
+        .form-container {
+            text-align: left; /* Выровняем текст по левому краю */
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff; /* Белый фон для контейнера */
+            position: relative; /* Чтобы потом позиционировать список */
+        }
+        h1 {
+            margin-top: 0; /* Убираем верхний отступ */
+            padding-top: 0; /* Убираем верхний padding */
+            color: black;
+            border: none; /* Убираем границу */
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            color: #333; /* Темно-серый цвет текста */
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 8px;
+            margin-bottom: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc; /* Серый цвет границы */
+            border-radius: 4px;
+            position: relative;
+        }
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            background-color: blue;
+            color: white;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: darkblue;
+        }
+        /* Позиционирование выпадающего списка под полем ввода */
+        .autocomplete-list {
+            position: absolute;
+            top: calc(100% + 5px); /* Позиционирование под текстовым полем с небольшим отступом */
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .autocomplete-list-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .autocomplete-list-item:hover {
+            background-color: #ddd;
+        }
+        /* Перемещение кнопки влево */
+        .button-container {
+            display: flex;
+            justify-content: flex-start;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+<div class="form-container">
+    <h1>Edit User</h1>
+    <form th:action="@{/updateUser}" method="post" th:object="${user}">
+        <input type="hidden" name="id" th:field="*{id}">
+
+        <label for="name">Name:</label>
+        <input type="text" id="name" name="name" th:field="*{name}">
+        <div th:if="${#fields.hasErrors('name')}" class="error">
+            <span th:each="err : ${#fields.errors('name')}">
+                <span th:text="${err == 'Name cannot be blank' ? 'Please provide a name' : (err == 'Name must be at least 2 characters' ? 'Name must be at least 2 characters' : err)}"></span>
+            </span>
+        </div>
+
+        <label for="lastName">Last Name:</label>
+        <input type="text" id="lastName" name="lastName" th:field="*{lastName}">
+        <div th:if="${#fields.hasErrors('lastName')}" class="error">
+            <span th:each="err : ${#fields.errors('lastName')}">
+                <span th:text="${err == 'Last name cannot be blank' ? 'Please provide a last name' : (err == 'Last name must be at least 2 characters' ? 'Last name must be at least 2 characters' : err)}"></span>
+            </span>
+        </div>
+
+        <label for="phoneNumber">Phone Number:</label>
+        <input type="text" id="phoneNumber" name="phoneNumber" th:field="*{phoneNumber}">
+        <div th:if="${#fields.hasErrors('phoneNumber')}" class="error">
+            <span th:each="err : ${#fields.errors('phoneNumber')}">
+                <span th:text="${err == 'please use pattern XXX-XX-XX' ? 'Please use pattern XXX-XX-XX' : err}"></span>
+            </span>
+        </div>
+
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" th:field="*{email}">
+        <div th:if="${#fields.hasErrors('email')}" class="error">
+            <span th:each="err : ${#fields.errors('email')}">
+                <span th:text="${err == 'email must ends with abc.com' ? 'Email must end with abc.com' : err}"></span>
+            </span>
+        </div>
+
+        <div class="button-container">
+            <button type="submit">Save</button>
+        </div>
+    </form>
+    <div th:if="${message}">
+        <p th:text="${message}"></p>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const inputs = document.querySelectorAll('input[type="text"]');
+
+        inputs.forEach(input => {
+            let hasFocused = false;
+            input.addEventListener('focus', function() {
+                if (!hasFocused) {
+                    this.value = '';
+                    hasFocused = true;
+                }
+            });
+        });
+    });
+</script>
+</body>
+</html>

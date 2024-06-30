@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>User Information</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #2e2e2e;
+            background-image: url("/image/q.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            padding: 0;
+        }
+        .user-actions {
+            text-align: center;
+        }
+        .user-actions form {
+            display: inline-block;
+            margin: 0 5px;
+            position: relative;
+        }
+        .table-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: rgba(255, 255, 255, 0.8);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            margin: 20px;
+        }
+        .table-container h1 {
+            font-size: 3em;
+            margin: 20px 0;
+            color: black;
+            text-align: center;
+        }
+        .add-user-button {
+            margin-top: 10px;
+        }
+        .button {
+            border: none;
+            padding: 10px 20px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            border-radius: 5px;
+            position: relative;
+            z-index: 1;
+        }
+        .button:hover {
+            animation: blink 1s infinite;
+        }
+        @keyframes blink {
+            0%, 100% {
+                background-color: blue;
+            }
+            50% {
+                background-color: red;
+            }
+        }
+        .small-button {
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+            text-decoration: none;
+            color: white;
+            background-color: blue;
+            border-radius: 5px;
+            opacity: 0.7;
+            position: relative;
+            z-index: 1;
+        }
+        .small-button:hover {
+            background-color: darkblue;
+            opacity: 1;
+        }
+        input[type="text"] {
+            margin-bottom: 20px;
+            position: relative;
+        }
+        .autocomplete-list {
+            position: absolute;
+            right: 100%;
+            top: 0;
+            width: 150px;
+            background-color: white;
+            border: 1px solid #ccc;
+            z-index: 1;
+        }
+        .autocomplete-list-item {
+            padding: 8px;
+            cursor: pointer;
+        }
+        .autocomplete-list-item:hover {
+            background-color: #ddd;
+        }
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            color: black;
+        }
+        tr:hover {
+            background-color: #ddd;
+        }
+        th {
+            padding-top: 12px;
+            padding-bottom: 12px;
+            background-color: #4CAF50;
+            color: white;
+        }
+        .slide-out {
+            animation: slideOut 0.5s forwards;
+        }
+        @keyframes slideOut {
+            0% {
+                transform: translateX(0);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+        .message {
+            color: red;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .highlighted-row {
+            background-color: yellow;
+        }
+        .highlighted-row:hover {
+            background-color: blue;
+        }
+        .rotating-arrow {
+            display: inline-block;
+            animation: rotateArrow 2s linear infinite;
+        }
+        @keyframes rotateArrow {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="table-container">
+    <h1>User Information</h1>
+    <!-- Отображение сообщения -->
+    <div th:if="${message}" th:text="${message}" class="message"></div>
+
+    <table>
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Surname</th>
+            <th>Phone Number</th>
+            <th>Email</th>
+            <th colspan="3">Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}" th:classappend="${user.id == addedUserId || user.id == updatedUserId} ? 'highlighted-row'">
+            <td>
+                <!-- Условие для отображения крутящейся стрелки для добавленного или обновленного пользователя -->
+                <span th:if="${user.id == addedUserId || user.id == updatedUserId}" class="rotating-arrow">&#10148;</span>
+                <span th:text="${user.id}">ID</span>
+            </td>
+            <td th:text="${user.name}">Name</td>
+            <td th:text="${user.lastName}">Surname</td>
+            <td th:text="${user.phoneNumber}">Phone Number</td>
+            <td th:text="${user.email}">Email</td>
+            <td class="user-actions">
+                <form th:action="@{/editUser/{id}(id=${user.id})}" method="get" class="action-form">
+                    <button type="submit" class="small-button">Edit</button>
+                </form>
+                <form th:action="@{/deleteUser}" method="post" class="action-form">
+                    <input type="hidden" name="_method" value="DELETE"/>
+                    <input type="hidden" name="id" th:value="${user.id}"/>
+                    <button type="submit" class="small-button">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+    <div class="add-user-button">
+        <form action="/addNewUser" method="get" class="action-form">
+            <button type="submit" class="button">Add New User</button>
+        </form>
+    </div>
+</div>
+</body>
+</html>
