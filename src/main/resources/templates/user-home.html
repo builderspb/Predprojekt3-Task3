@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>User Home</title>
+
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      width: 400px;
+      text-align: center;
+    }
+    .roles span {
+      display: inline-block;
+      background-color: #4CAF50;
+      color: white;
+      padding: 5px 10px;
+      border-radius: 5px;
+      margin: 5px;
+    }
+    .logout-button {
+      background-color: #f44336;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+      border-radius: 5px;
+      margin-top: 20px;
+    }
+    .logout-button:hover {
+      background-color: #d32f2f;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="text-primary">Добро пожаловать, <span th:text="${user.userName}">User</span>!</h1>
+  <div class="info">
+    <p><strong>Имя:</strong> <span th:text="${user.userName}">First Name</span></p>
+    <p><strong>Фамилия:</strong> <span th:text="${user.lastName}">Last Name</span></p>
+    <p><strong>Электронная почта:</strong> <span th:text="${user.email}">email</span></p>
+    <p><strong>Номер телефона:</strong> <span th:text="${user.phoneNumber}">phone</span></p>
+    <div th:each="role : ${user.roles}">
+      <p><strong>Уровень доступа:</strong> <span th:text="${role.name}" class="badge badge-success">Role</span></p>
+    </div>
+  </div>
+  <form th:action="@{/logout}" method="post">
+    <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+    <button type="submit" class="btn btn-danger logout-button">Выйти</button>
+  </form>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>

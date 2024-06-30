@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Add New User</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            background-color: #2e2e2e;
+        }
+        .form-container {
+            text-align: center;
+            border: 1px solid #ccc;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            max-width: 400px;
+            width: 100%;
+        }
+        .error {
+            color: red;
+            font-size: 0.9em;
+            margin-top: -10px;
+            margin-bottom: 10px;
+        }
+    </style>
+
+    <script>
+        function validateForm(event) {
+            const roles = document.getElementById("roles");
+            const password = document.getElementById("password");
+            const rolesErrorDiv = document.getElementById("rolesError");
+            const passwordErrorDiv = document.getElementById("passwordError");
+
+            let valid = true;
+
+            if (roles.selectedOptions.length === 0) {
+                rolesErrorDiv.textContent = "Необходимо выбрать хотя бы одну роль.";
+                rolesErrorDiv.style.display = "block";
+                valid = false;
+            } else {
+                rolesErrorDiv.style.display = "none";
+            }
+
+            if (password.value.trim() === "") {
+                passwordErrorDiv.textContent = "Добавьте пароль для нового пользователя";
+                passwordErrorDiv.style.display = "block";
+                valid = false;
+            } else {
+                passwordErrorDiv.style.display = "none";
+            }
+
+            if (!valid) {
+                event.preventDefault(); // Prevent form submission
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const form = document.querySelector("form");
+            form.addEventListener("submit", validateForm);
+        });
+    </script>
+</head>
+<body>
+<div class="form-container container d-flex flex-column justify-content-center align-items-center">
+    <h1 class="mb-4">Добавить нового пользователя</h1>
+    <form th:action="@{/saveUser}" th:object="${user}" method="post">
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
+
+        <div class="form-group">
+            <label for="username">Имя:</label>
+            <input type="text" id="userName" th:field="*{userName}" class="form-control" pattern="^[A-Za-zА-Яа-яЁё\s]+$" title="Имя должно содержать только буквы." required />
+            <div th:if="${#fields.hasErrors('userName')}" class="error" th:errors="*{userName}">Invalid name</div>
+        </div>
+
+        <div class="form-group">
+            <label for="lastName">Фамилия:</label>
+            <input type="text" id="lastName" th:field="*{lastName}" class="form-control" pattern="^[A-Za-zА-Яа-яЁё\s]+$" title="Фамилия должна содержать только буквы." required />
+            <div th:if="${#fields.hasErrors('lastName')}" class="error" th:errors="*{lastName}">Invalid last name</div>
+        </div>
+
+        <div class="form-group">
+            <label for="phoneNumber">Номер телефона:</label>
+            <input type="text" id="phoneNumber" th:field="*{phoneNumber}" class="form-control" pattern="^\d{3}-\d{2}-\d{2}$" title="Пожалуйста, используйте шаблон XXX-XX-XX." required />
+            <div th:if="${#fields.hasErrors('phoneNumber')}" class="error" th:errors="*{phoneNumber}">Invalid phone number</div>
+        </div>
+
+        <div class="form-group">
+            <label for="email">Электронная почта:</label>
+            <input type="text" id="email" th:field="*{email}" class="form-control" pattern="^[a-zA-Z0-9._%+-]+@abc\.com$" title="Электронная почта должна заканчиваться на abc.com." required />
+            <div th:if="${#fields.hasErrors('email')}" class="error" th:errors="*{email}">Invalid email</div>
+        </div>
+
+        <div class="form-group">
+            <label for="password">Пароль:</label>
+            <input type="password" id="password" th:field="*{password}" class="form-control" />
+            <div id="passwordError" class="error" style="display:none;"></div>
+            <div th:if="${#fields.hasErrors('password')}" class="error" th:errors="*{password}">Invalid password</div>
+        </div>
+
+        <div class="form-group">
+            <label for="roles">Роль:</label>
+            <select id="roles" name="roles" class="form-control" multiple>
+                <option value="USER">Пользователь</option>
+                <option value="ADMIN">Администратор</option>
+            </select>
+            <div id="rolesError" class="error" style="display:none;"></div>
+            <div th:if="${#fields.hasErrors('roles')}" class="error" th:errors="*{roles}"></div>
+        </div>
+
+        <div class="button-container">
+            <button type="submit" name="saveButton" class="btn btn-primary">Сохранить</button>
+        </div>
+    </form>
+    <div th:if="${message}" class="mt-3">
+        <p th:text="${message}"></p>
+    </div>
+</div>
+
+<!-- Bootstrap JS, Popper.js, and jQuery -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+</body>
+</html>
