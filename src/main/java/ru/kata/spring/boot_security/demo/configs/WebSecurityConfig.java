@@ -20,33 +20,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-    private final SuccessUserHandler loginUserHandler;
     private final UserDetailsService userDetailsService;
 
+    /**
+     * Настраивает безопасность HTTP-запросов.
+     *
+     * @param http объект HttpSecurity, используемый для настройки безопасности HTTP-запросов
+     * @throws Exception если возникает ошибка конфигурации безопасности
+     */
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .authorizeRequests() // Настройка авторизации запросов
                 .antMatchers("/login", "/logout").permitAll() // Разрешить доступ к страницам логина и логаута всем пользователям
-                .antMatchers("/admin/**").hasAuthority("ADMIN") // Ограничить доступ к страницам /admin/** только пользователям с ролью ADMIN
-                .antMatchers("/user/**").hasAnyAuthority("USER", "ADMIN") // Ограничить доступ к страницам /user/** пользователям с ролями USER или ADMIN
+                .antMatchers("/api/user").hasAnyAuthority("USER", "ADMIN") // Ограничить доступ к страницам /user пользователям с ролями USER или ADMIN
+                .antMatchers("/api/users/**").hasAuthority("ADMIN") // Ограничить доступ к REST API /api/users/** только пользователям с ролью ADMIN
                 .anyRequest().authenticated() // Все остальные запросы требуют аутентификации
                 .and()
-                .formLogin() // Настройка формы логина
-                .loginPage("/login") // Указать URL страницы логина
-                .failureUrl("/login?error=true") // Указать URL для перенаправления при неудачной авторизации
-                .successHandler(loginUserHandler) // Указать обработчик успешного логина
-                .permitAll() // Разрешить доступ к форме логина всем пользователям
+                .httpBasic() // Использовать HTTP Basic Authentication для REST API
                 .and()
-                .logout() // Настройка логаута
-                .logoutUrl("/logout") // Указать URL для логаута
-                .logoutSuccessUrl("/login?logout") // Указать URL для перенаправления после успешного логаута
-                .invalidateHttpSession(true) // Инвалидировать текущую сессию при логауте
-                .deleteCookies("JSESSIONID") // Удалить куки JSESSIONID при логауте
-                .permitAll() // Разрешить доступ к логауту всем пользователям
-                .and()
-                .csrf() // Включить защиту от CSRF атак
-                .and()
+                .csrf().disable() // Отключить защиту от CSRF атак для REST API
                 .sessionManagement() // Настройка управления сессиями
                 .sessionFixation().migrateSession() // Создать новую сессию при аутентификации, чтобы предотвратить атаки с фиксацией сессии
                 .maximumSessions(1) // Ограничить количество одновременных сессий для одного пользователя до одной
@@ -54,9 +47,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
+
     /**
      * Настраивает AuthenticationManagerBuilder для использования пользовательского UserDetailsService и BCryptPasswordEncoder.
+     * <p>
      * Необходимо для аутентификации пользователей с использованием данных из базы данных и безопасного хранения паролей.
+     *
+     * @param auth объект AuthenticationManagerBuilder, используемый для настройки аутентификации
+     * @throws Exception если возникает ошибка конфигурации аутентификации
      */
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -65,7 +63,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     /**
-     *Кодирование паролей
+     * Создает и настраивает бин для кодирования паролей с использованием BCryptPasswordEncoder.
+     * <p>
+     * Метод используется для обеспечения безопасности хранения паролей путем их кодирования перед сохранением в базу данных.
+     *
+     * @return BCryptPasswordEncoder бин для кодирования паролей
      */
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
@@ -74,16 +76,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 
     /**
-     * Маппер для модель/ДТО
+     * Создает и настраивает бин для маппинга между моделями и DTO с использованием ModelMapper.
+     * <p>
+     * Метод используется для упрощения преобразования между объектами модели и их представлениями в виде DTO.
+     *
+     * @return ModelMapper бин для маппинга между моделями и DTO
      */
     @Bean
     public ModelMapper modelMapper() {
         return new ModelMapper();
     }
 
-
     /**
-     *Конфигурация сессии
+     * Конфигурирует параметры сессии для приложения.
+     * <p>
+     * Метод создает и настраивает бин для инициализации контекста сервлета.
+     * Устанавливает максимальный срок действия сессионных cookie и конфигурирует их как HttpOnly для повышения безопасности.
+     *
+     * @return ServletContextInitializer бин для инициализации контекста сервлета
      */
     @Bean
     public ServletContextInitializer initializer() {

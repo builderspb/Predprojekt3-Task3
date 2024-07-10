@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.Pattern;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -24,6 +23,8 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import ru.kata.spring.boot_security.demo.util.userValidation.PasswordConstraint;
+import ru.kata.spring.boot_security.demo.util.userValidation.ValidationGroups;
 
 /**
  * Представляет пользователя в системе
@@ -38,24 +39,31 @@ import lombok.ToString;
 @ToString(exclude = "roles") // Исключить поле users из метода toString
 @EqualsAndHashCode(exclude = "roles") // Исключить поле users из методов equals и hashCode
 public class User {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @NotBlank
+
+    @NotBlank(groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
     @Column(name = "user_name")
     private String userName;
-    @NotBlank
+
+    @NotBlank(groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
     @Column(name = "lastname")
     private String lastName;
+
     @Column(name = "phone_number")
-    @Pattern(regexp = "\\d{3}-\\d{2}-\\d{2}", message = "please use pattern XXX-XX-XX")
+    @Pattern(regexp = "\\d{3}-\\d{2}-\\d{2}", message = "please use pattern XXX-XX-XX", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
     private String phoneNumber;
+
     @Column(name = "email")
     private String email;
-    @NotBlank(message = "Password cannot be blank")
+
+    @PasswordConstraint(groups = ValidationGroups.Create.class)
     @Column(name = "password")
     private String password;
-    @NotEmpty(message = "Необходимо выбрать хотя бы одну роль.")
+
+    @NotEmpty(message = "Необходимо выбрать хотя бы одну роль.", groups = {ValidationGroups.Create.class, ValidationGroups.Update.class})
     @ManyToMany(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(
             name = "user_roles",
@@ -63,6 +71,5 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
-
 
 }

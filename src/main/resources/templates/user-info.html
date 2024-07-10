@@ -203,29 +203,46 @@
             <td th:text="${user.phoneNumber}">Phone Number</td>
             <td th:text="${user.email}">Email</td>
             <td class="user-actions">
-                <form th:action="@{/editUser/{id}(id=${user.id})}" method="get" class="action-form">
-                    <button type="submit" class="btn btn-primary btn-sm">Изменить</button>
-                </form>
-                <form th:action="@{/deleteUser}" method="post" class="action-form">
-                    <input type="hidden" name="${_csrf.parameterName}" th:value="${_csrf.token}"/>
-                    <input type="hidden" name="_method" value="DELETE"/>
-                    <input type="hidden" name="id" th:value="${user.id}"/>
-                    <button type="submit" class="btn btn-danger btn-sm">Удалить</button>
-                </form>
+                <button class="btn btn-primary btn-sm editButton" data-id="${user.id}">Изменить</button>
+                <button class="btn btn-danger btn-sm deleteButton" data-id="${user.id}">Удалить</button>
             </td>
         </tr>
         </tbody>
     </table>
     <div class="add-user-button">
-        <form th:action="@{/addNewUser}" method="get" class="action-form">
-            <button type="submit" class="btn btn-success">Добавить нового пользователя</button>
-        </form>
+        <button id="addUserButton" class="btn btn-success">Добавить нового пользователя</button>
     </div>
+</div>
+
+<!-- Add User Modal -->
+<div id="addUserModal" style="display:none;">
+    <h2>Add New User</h2>
+    <form id="addUserForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <button type="submit">Save</button>
+    </form>
+</div>
+
+<!-- Edit User Modal -->
+<div id="editUserModal" style="display:none;">
+    <h2>Edit User</h2>
+    <form id="editUserForm">
+        <input type="hidden" id="editUserId" name="id">
+        <label for="editUsername">Username:</label>
+        <input type="text" id="editUsername" name="username" required>
+        <label for="editEmail">Email:</label>
+        <input type="email" id="editEmail" name="email" required>
+        <button type="submit">Save</button>
+    </form>
 </div>
 
 <!-- Bootstrap JS, Popper.js, and jQuery -->
 <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+<script defer src="/js/user-info.js"></script>
 </body>
 </html>
