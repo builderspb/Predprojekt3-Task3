@@ -22,7 +22,6 @@ import java.util.Set;
 /**
  * Представляет роль пользователя в системе
  */
-
 @Entity
 @Table(name = "roles")
 @Data

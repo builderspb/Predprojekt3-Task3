@@ -1,5 +1,7 @@
 package ru.kata.spring.boot_security.demo.exceptionHandling.handlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -22,6 +24,7 @@ import java.util.Map;
 @ControllerAdvice
 public class UserExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(UserExceptionHandler.class);
 
     /**
      * Обрабатывает исключения валидации, возникающие при передаче некорректных данных в контроллер.
@@ -31,6 +34,7 @@ public class UserExceptionHandler {
      */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
+        logger.error("Произошла ошибка валидации: ", ex);
         Map<String, String> errors = new HashMap<>();
         ex.getBindingResult().getAllErrors().forEach((error) -> {
             String fieldName = ((FieldError) error).getField();
@@ -43,7 +47,7 @@ public class UserExceptionHandler {
 
     /**
      * Обрабатывает исключения NoSuchUserException.
-     *
+     * <p>
      * Возвращает ResponseEntity, параметризованный типом UserIncorrectData (это класс который предназначен для парсирования
      * в Json, чтобы в Http ответе отправить сообщение об ошибке)
      *
@@ -53,6 +57,7 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(NoSuchUserException.class)
     public ResponseEntity<UserIncorrectData> handleException(NoSuchUserException exception) {
+        logger.error("Произошла ошибка: пользователь не найден: ", exception);
         // создается объект класса, чтобы передать ему сообщение об ошибке(далее он будет преобразован в Json для отправки в Http ответе)
         UserIncorrectData data = new UserIncorrectData();
         // Объекту класса передается сообщение
@@ -63,7 +68,6 @@ public class UserExceptionHandler {
     }
 
 
-
     /**
      * Обрабатывает исключения UserSaveException, возникающие при ошибках сохранения пользователя.
      *
@@ -72,10 +76,12 @@ public class UserExceptionHandler {
      */
     @ExceptionHandler(UserSaveException.class)
     public ResponseEntity<UserIncorrectData> handleUserSaveException(UserSaveException exception) {
+        logger.error("Произошла ошибка при сохранении пользователя: ", exception);
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
         return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);
     }
+
 
     /**
      * Обрабатывает исключения UserUpdateException, возникающие при ошибках обновления пользователя.
@@ -85,6 +91,7 @@ public class UserExceptionHandler {
      */
     @ExceptionHandler(UserUpdateException.class)
     public ResponseEntity<UserIncorrectData> handleUserUpdateException(UserUpdateException exception) {
+        logger.error("Произошла ошибка при обновлении пользователя: ", exception);
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
         return new ResponseEntity<>(data, HttpStatus.INTERNAL_SERVER_ERROR);

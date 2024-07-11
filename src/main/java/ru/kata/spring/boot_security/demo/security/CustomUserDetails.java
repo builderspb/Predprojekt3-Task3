@@ -1,10 +1,8 @@
 package ru.kata.spring.boot_security.demo.security;
 
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import ru.kata.spring.boot_security.demo.model.User;
-
 
 import java.io.Serial;
 import java.util.Collection;
@@ -14,7 +12,6 @@ import java.util.Set;
 /**
  * Позволяет Spring Security работать с объектами для аутентификации и авторизации.
  */
-
 public final class CustomUserDetails implements UserDetails {
 
     @Serial
@@ -23,6 +20,7 @@ public final class CustomUserDetails implements UserDetails {
     private final Set<CustomRoleDetails> authorities;
 
     /**
+     *
      */
     public CustomUserDetails(User user, Set<CustomRoleDetails> authorities) {
         this.user = user;

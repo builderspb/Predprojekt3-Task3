@@ -1,6 +1,7 @@
 package ru.kata.spring.boot_security.demo.exceptionHandling.handlers;
 
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -16,6 +17,8 @@ import ru.kata.spring.boot_security.demo.exceptionHandling.exception.UserIncorre
 @ControllerAdvice
 public class RoleExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(RoleExceptionHandler.class);
+
     /**
      * Обрабатывает исключение NoSuchRoleException, возникающее, когда роль не найдена в базе данных.
      *
@@ -24,8 +27,10 @@ public class RoleExceptionHandler {
      */
     @ExceptionHandler
     public ResponseEntity<UserIncorrectData> handleException(NoSuchRoleException exception) {
+        logger.error("Произошла ошибка: роль не найдена: ", exception);
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
+
         return new ResponseEntity<>(data, HttpStatus.NOT_FOUND);
     }
 }

@@ -29,7 +29,6 @@ import ru.kata.spring.boot_security.demo.util.userValidation.ValidationGroups;
 /**
  * Представляет пользователя в системе
  */
-
 @Entity
 @Table(name = "users")
 @Data

@@ -1,7 +1,9 @@
 package ru.kata.spring.boot_security.demo.dataInitializers;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.boot.CommandLineRunner;
+import org.jetbrains.annotations.NotNull;
+import org.springframework.context.ApplicationListener;
+import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -16,10 +18,9 @@ import java.util.Set;
 /**
  * Инициализирует данные для приложения при запуске. Чтобы гарантировать наличие необходимых ролей и пользователей в БД
  */
-
 @Component
 @RequiredArgsConstructor
-public class DataInitializer implements CommandLineRunner {
+public class DataInitializer implements ApplicationListener<ContextRefreshedEvent> {
     private static final String ROLE_NOT_FOUND = "Роль не найдена.";
     private static UserData ADMIN;
     private static UserData USER;
@@ -36,11 +37,11 @@ public class DataInitializer implements CommandLineRunner {
      * 2. Создание данных для пользователей (администратора и обычного пользователя).
      * 3. Создание пользователей в базе данных, используя созданные данные.
      *
-     * @param args аргументы командной строки (не используются)
-     * @throws Exception если возникает ошибка во время выполнения методов инициализации
+     * @param event аргументы командной строки (не используются)
      */
     @Transactional
-    public void run(String... args) throws Exception {
+    @Override
+    public void onApplicationEvent(@NotNull ContextRefreshedEvent event) {
         initializeRoles();
         initializeUserData();
         initializeUsers();

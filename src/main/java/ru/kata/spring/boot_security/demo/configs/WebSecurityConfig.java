@@ -1,7 +1,6 @@
 package ru.kata.spring.boot_security.demo.configs;
 
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -15,7 +14,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 /**
  * Комплексная настройка безопасности, аутентификация, авторизация, защитой от атак и управлением сессиями.
  */
-
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
@@ -47,7 +45,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-
     /**
      * Настраивает AuthenticationManagerBuilder для использования пользовательского UserDetailsService и BCryptPasswordEncoder.
      * <p>
@@ -75,17 +72,17 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    /**
-     * Создает и настраивает бин для маппинга между моделями и DTO с использованием ModelMapper.
-     * <p>
-     * Метод используется для упрощения преобразования между объектами модели и их представлениями в виде DTO.
-     *
-     * @return ModelMapper бин для маппинга между моделями и DTO
-     */
-    @Bean
-    public ModelMapper modelMapper() {
-        return new ModelMapper();
-    }
+//    /**
+//     * Создает и настраивает бин для маппинга между моделями и DTO с использованием ModelMapper.
+//     * <p>
+//     * Метод используется для упрощения преобразования между объектами модели и их представлениями в виде DTO.
+//     *
+//     * @return ModelMapper бин для маппинга между моделями и DTO
+//     */
+//    @Bean
+//    public ModelMapper modelMapper() {
+//        return new ModelMapper();
+//    }
 
     /**
      * Конфигурирует параметры сессии для приложения.

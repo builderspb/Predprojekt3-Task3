@@ -1,9 +1,9 @@
 package ru.kata.spring.boot_security.demo.dataInitializers;
 
-import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.RequiredArgsConstructor;
 import lombok.ToString;
 import ru.kata.spring.boot_security.demo.model.Role;
 
@@ -14,7 +14,7 @@ import java.util.Set;
  */
 @Data
 @Builder
-@AllArgsConstructor
+@RequiredArgsConstructor
 @ToString(exclude = "roles") // Исключить поле users из метода toString
 @EqualsAndHashCode(exclude = "roles") // Исключить поле users из методов equals и hashCode
 public final class UserData {

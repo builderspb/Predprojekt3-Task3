@@ -1,5 +1,7 @@
 package ru.kata.spring.boot_security.demo.exceptionHandling.handlers;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -14,6 +16,8 @@ import ru.kata.spring.boot_security.demo.exceptionHandling.exception.UserIncorre
 @ControllerAdvice
 public class GlobalExceptionHandler {
 
+    private static final Logger logger = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     /**
      * Обрабатывает любые другие исключения типа Exception. Может быть выброшено в различных ситуациях (например, если вместо ID ввести буквы).
      * Возвращает ResponseEntity, параметризованный типом UserIncorrectData
@@ -23,6 +27,7 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<UserIncorrectData> handleException(Exception exception) {
+        logger.error("Произошла необработанная ошибка: ", exception);
         UserIncorrectData data = new UserIncorrectData();
         data.setInfo(exception.getMessage());
 

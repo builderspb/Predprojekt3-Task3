@@ -1,44 +1,27 @@
 package ru.kata.spring.boot_security.demo.mapper;
 
-import lombok.AllArgsConstructor;
-import org.modelmapper.ModelMapper;
-import org.springframework.stereotype.Component;
 import ru.kata.spring.boot_security.demo.dto.UserDTO;
 import ru.kata.spring.boot_security.demo.model.User;
+import org.mapstruct.Mapper;
 
 /**
- * Преобразование между объектами User, UpdateUserDTO и NewUserDTO с использованием ModelMapper.
+ * Интерфейс для маппинга между сущностями User и UserDTO.
+ * <p>
+ * Этот интерфейс использует библиотеку MapStruct для автоматической генерации
+ * реализации методов маппинга.
  */
-@Component
-@AllArgsConstructor
-public class UserMapper {
-    private final ModelMapper modelMapper;
-
+@Mapper(componentModel = "spring") //  указывает, что сгенерированный маппер будет зарегистрирован как Spring Bean.
+public interface UserMapper {
 
     /**
-     * Преобразует объект в UserDTO.
+     * Преобразует объект User в объект UserDTO.
      *
-     * @param <T> тип исходного объекта
-     * @param User исходный объект
-     * @return UserDTO
+     * @param user объект User, который нужно преобразовать
+     * @return объект UserDTO, полученный в результате преобразования
      */
-    public <T> UserDTO convertToUserDTO(T User) {
-        return modelMapper.map(User, UserDTO.class);
-    }
-
-    /**
-     * Преобразует объект в User.
-     *
-     * @param <T> тип исходного объекта
-     * @param userDTO исходный объект
-     * @return User
-     */
-    public <T>User convertToUser(T userDTO) {
-        return modelMapper.map(userDTO, User.class);
-    }
+    UserDTO convertToUserDTO(User user);
 
 }
-
 
 
 
