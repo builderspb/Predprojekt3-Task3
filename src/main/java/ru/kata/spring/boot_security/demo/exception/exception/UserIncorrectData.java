@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.exceptionHandling.exception;
+package ru.kata.spring.boot_security.demo.exception.exception;
 
 /**
  * Класс, используемый для отправки информации об ошибке в HTTP ответе в формате JSON.
@@ -9,6 +9,7 @@ public class UserIncorrectData {
     private String info;
 
     public UserIncorrectData() {
+        // Конструктор по умолчанию необходим для сериализации/десериализации JSON
     }
 
     public String getInfo() {

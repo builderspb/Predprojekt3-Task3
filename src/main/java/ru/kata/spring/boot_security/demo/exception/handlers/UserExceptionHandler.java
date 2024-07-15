@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.exceptionHandling.handlers;
+package ru.kata.spring.boot_security.demo.exception.handlers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -8,10 +8,10 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import ru.kata.spring.boot_security.demo.exceptionHandling.exception.NoSuchUserException;
-import ru.kata.spring.boot_security.demo.exceptionHandling.exception.UserIncorrectData;
-import ru.kata.spring.boot_security.demo.exceptionHandling.exception.UserSaveException;
-import ru.kata.spring.boot_security.demo.exceptionHandling.exception.UserUpdateException;
+import ru.kata.spring.boot_security.demo.exception.exception.NoSuchUserException;
+import ru.kata.spring.boot_security.demo.exception.exception.UserIncorrectData;
+import ru.kata.spring.boot_security.demo.exception.exception.UserSaveException;
+import ru.kata.spring.boot_security.demo.exception.exception.UserUpdateException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +36,7 @@ public class UserExceptionHandler {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         logger.error("Произошла ошибка валидации: ", ex);
         Map<String, String> errors = new HashMap<>();
-        ex.getBindingResult().getAllErrors().forEach((error) -> {
+        ex.getBindingResult().getAllErrors().forEach(error -> {
             String fieldName = ((FieldError) error).getField();
             String errorMessage = error.getDefaultMessage();
             errors.put(fieldName, errorMessage);
@@ -57,7 +57,7 @@ public class UserExceptionHandler {
 
     @ExceptionHandler(NoSuchUserException.class)
     public ResponseEntity<UserIncorrectData> handleException(NoSuchUserException exception) {
-        logger.error("Произошла ошибка: пользователь не найден: ", exception);
+        logger.error("Произошла ошибка  ", exception);
         // создается объект класса, чтобы передать ему сообщение об ошибке(далее он будет преобразован в Json для отправки в Http ответе)
         UserIncorrectData data = new UserIncorrectData();
         // Объекту класса передается сообщение

@@ -3,7 +3,7 @@ package ru.kata.spring.boot_security.demo.helper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
-import ru.kata.spring.boot_security.demo.exceptionHandling.exception.NoSuchRoleException;
+import ru.kata.spring.boot_security.demo.exception.exception.RoleCreationException;
 import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RoleService {
     private final RoleRepository roleRepository;
-    private static final String THE_ROLE_MUST_EXIST = "Роль %s должна существовать после перехвата исключения DataIntegrityViolationException";
+    private static final String ERROR_CREATING_ROLE = "Ошибка при создании роли: %s";
 
 
     /**
@@ -26,7 +26,7 @@ public class RoleService {
      * @param user набор ролей
      * @return Set<Role> набор проверенных ролей
      */
-    public User validateRoles(User user) {
+    public User validateRoles(User user) throws RoleCreationException  {
         Set<Role> updatedRoles = user.getRoles().stream()
                 .map(this::findOrCreateRole)
                 .collect(Collectors.toSet());
@@ -39,27 +39,19 @@ public class RoleService {
      * Получает существующую роль или создает новую, если она не существует.
      * <p>
      * Ищет роль по имени в базе данных, с помощью метода findRoleByName из UserRepository
-     * Если роль не найдена, пытается сохранить новую роль, с помощью метода save
-     * В случае возникновения DataIntegrityViolationException (ошибка уникальности), повторно пытается найти роль по имени.
-     * DataIntegrityViolationException может возникнуть при добавлении новой роли в момент когда другая транзакция уже добавила такую же роль.
-     * Если роль не найдена после повторного поиска, выбрасывает исключение NoSuchRoleException с сообщением
-     * "Роль %s должна существовать после перехвата исключения DataIntegrityViolationException", что говорит о неполадках в других частях кода
+     * Если роль не найдена, сохраняет новую роль, с помощью метода save
      *
      * @param role роль, которую необходимо найти или создать
      * @return Role найденная или созданная роль
-     * @throws NoSuchRoleException если роль не найдена после попытки создать ее
+     * @throws RoleCreationException если роль не может быть создана
      */
-    private Role findOrCreateRole(Role role) {
-        return roleRepository.findRoleByName(role.getName())
-                .orElseGet(() -> {
-                    try {
-                        return roleRepository.save(role);
-                    } catch (DataIntegrityViolationException e) {
-                        // Если происходит ошибка уникальности, повторно найти роль
-                        return roleRepository.findRoleByName(role.getName())
-                                .orElseThrow(() -> new NoSuchRoleException(String.format(THE_ROLE_MUST_EXIST, role.getName())));
-                    }
-                });
-    }
+    private Role findOrCreateRole(Role role) throws RoleCreationException {
+        try {
+            return roleRepository.findRoleByName(role.getName())
+                    .orElseGet(() -> roleRepository.save(role));
+        } catch (DataIntegrityViolationException e) {
+            throw new RoleCreationException(String.format(ERROR_CREATING_ROLE, role));
 
+        }
+    }
 }

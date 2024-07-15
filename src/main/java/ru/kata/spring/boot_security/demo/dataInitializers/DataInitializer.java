@@ -11,7 +11,7 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.repositories.RoleRepository;
 import ru.kata.spring.boot_security.demo.repositories.UserRepository;
 
-import javax.transaction.Transactional;
+import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Set;
 
@@ -86,12 +86,12 @@ public class DataInitializer implements ApplicationListener<ContextRefreshedEven
         Role userRole = roleRepository.findRoleByName("USER").orElseThrow(() -> new RuntimeException(ROLE_NOT_FOUND));
 
         ADMIN = new UserData(
-                "Василий", "Иванов", "123-45-67", "admin@abc.com",
-                bCryptPasswordEncoder.encode("1"), Set.of(adminRole, userRole));
+                "admin", "Иванов", "123-45-67", "admin@abc.com",
+                bCryptPasswordEncoder.encode("admin"), Set.of(adminRole, userRole));
 
         USER = new UserData(
-                "Николай", "Севастьянов", "321-65-98", "user@abc.com",
-                bCryptPasswordEncoder.encode("2"), Set.of(userRole));
+                "user", "Севастьянов", "321-65-98", "user@abc.com",
+                bCryptPasswordEncoder.encode("user"), Set.of(userRole));
     }
 
 

@@ -1,7 +1,7 @@
 package ru.kata.spring.boot_security.demo.util.userValidation;
 
-import javax.validation.ConstraintValidator;
-import javax.validation.ConstraintValidatorContext;
+import jakarta.validation.ConstraintValidator;
+import jakarta.validation.ConstraintValidatorContext;
 
 /**
  * Валидатор для аннотации @PasswordConstraint.

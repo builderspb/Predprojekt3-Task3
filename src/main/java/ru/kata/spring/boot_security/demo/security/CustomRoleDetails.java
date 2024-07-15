@@ -5,7 +5,7 @@ import ru.kata.spring.boot_security.demo.model.Role;
 
 public class CustomRoleDetails implements GrantedAuthority {
 
-    private final Role role;
+    private final transient Role role;
 
     public CustomRoleDetails(Role role) {
         this.role = role;

@@ -1,4 +1,4 @@
-package ru.kata.spring.boot_security.demo.exceptionHandling.exception;
+package ru.kata.spring.boot_security.demo.exception.exception;
 
 /**
  * Исключение UserUpdateException наследуется от RuntimeException.

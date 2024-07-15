@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.dto.UserDTO;
+import ru.kata.spring.boot_security.demo.exception.exception.NoSuchUserException;
 import ru.kata.spring.boot_security.demo.mapper.UserMapperWrapper;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
@@ -37,7 +38,6 @@ public class UserRestController {
     private static final Logger logger = LoggerFactory.getLogger(UserRestController.class);
     private final UserService userService;
     private final UserMapperWrapper userMapperWrapper;
-    private static final String USER_DELETED = "Пользователь с ID = %d удален";
 
 
     /**
@@ -53,7 +53,7 @@ public class UserRestController {
     public ResponseEntity<List<UserDTO>> getAllUsers() {
         logger.info("Вызов метода getAllUsers");
         List<UserDTO> userDTO = userService.getAllUsers();
-        logger.info("Получен список всех пользователей через API");
+
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
@@ -72,7 +72,7 @@ public class UserRestController {
     public ResponseEntity<UserDTO> getUserById(@PathVariable long id) {
         logger.info("Вызов метода getUserById с параметром id = {}", id);
         UserDTO userDTO = userService.getUserById(id);
-        logger.info("Получен пользователь с ID = {} через API", id);
+
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
@@ -92,7 +92,7 @@ public class UserRestController {
     public ResponseEntity<UserDTO> createUser(@Validated(ValidationGroups.Create.class) @RequestBody User user) {
         logger.info("Вызов метода createUser с параметром user = {}", user);
         UserDTO userDTO = userService.saveUser(user);
-        logger.info("Создан новый пользователь через API: {}", userDTO);
+
         return ResponseEntity.status(HttpStatus.CREATED).body(userDTO);
     }
 
@@ -115,7 +115,7 @@ public class UserRestController {
         logger.info("Вызов метода updateUser с параметрами id = {}, user = {}", id, user);
         user.setId(id);
         UserDTO userDTO = userService.updateUser(user);
-        logger.info("Обновлен пользователь с ID = {} через API: {}", id, userDTO);
+
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
     }
 
@@ -135,10 +135,12 @@ public class UserRestController {
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя по его ID")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {
         logger.info("Вызов метода deleteUser с параметром id = {}", id);
-        userService.deleteUser(id);
-        String message = String.format(USER_DELETED, id);
-        logger.info("Удален пользователь с ID = {} через API", id);
-        return ResponseEntity.status(HttpStatus.OK).body(message);
+        try {
+            String resultMessage = userService.deleteUser(id);
+            return ResponseEntity.ok(resultMessage);
+        } catch (NoSuchUserException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+        }
     }
 
 
@@ -155,11 +157,14 @@ public class UserRestController {
     @Operation(summary = "Получить данные аутентифицированного пользователя", description = "Возвращает данные текущего аутентифицированного пользователя")
     public ResponseEntity<UserDTO> showUserHomePage() {
         logger.info("Вызов метода showUserHomePage");
+
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         CustomUserDetails customUserDetails = (CustomUserDetails) auth.getPrincipal();
         UserDTO userDTO = userMapperWrapper.convertToUserDTO(customUserDetails.getUser());
         logger.info("Получены данные аутентифицированного пользователя через API: {}", userDTO);
+
         return ResponseEntity.status(HttpStatus.OK).body(userDTO);
+
     }
 }
 

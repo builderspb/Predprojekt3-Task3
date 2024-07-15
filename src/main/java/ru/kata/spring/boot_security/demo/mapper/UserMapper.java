@@ -20,7 +20,7 @@ public interface UserMapper {
      * @return объект UserDTO, полученный в результате преобразования
      */
     UserDTO convertToUserDTO(User user);
-
+    User convertToUser(UserDTO userDTO);
 }
 
 
