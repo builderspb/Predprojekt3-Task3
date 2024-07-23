@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.kata.spring.boot_security.demo.dto.UserDTO;
-import ru.kata.spring.boot_security.demo.exception.exception.NoSuchUserException;
 import ru.kata.spring.boot_security.demo.mapper.UserMapperWrapper;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.security.CustomUserDetails;
@@ -135,12 +134,8 @@ public class UserRestController {
     @Operation(summary = "Удалить пользователя", description = "Удаляет пользователя по его ID")
     public ResponseEntity<String> deleteUser(@PathVariable long id) {
         logger.info("Вызов метода deleteUser с параметром id = {}", id);
-        try {
-            String resultMessage = userService.deleteUser(id);
-            return ResponseEntity.ok(resultMessage);
-        } catch (NoSuchUserException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-        }
+        String resultMessage = userService.deleteUser(id);
+        return ResponseEntity.ok(resultMessage);
     }
 
 

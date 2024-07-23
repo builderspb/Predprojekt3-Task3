@@ -53,11 +53,6 @@ public class UserServiceImpl implements UserService {
             throw new NoSuchUserException(USER_LIST_IS_EMPTY);
         }
 
-        users.forEach(user -> {
-            logger.info("Проверка перед маппингом User: {}", user);
-            System.out.println("Проверка перед маппингом User: " + user);
-        });
-
         List<UserDTO> userDTO = users.stream()
                 .sorted(Comparator.comparing(User::getId, Comparator.nullsLast(Long::compareTo)))
                 .map(userMapperWrapper::convertToUserDTO)
@@ -191,10 +186,6 @@ public class UserServiceImpl implements UserService {
                     logger.info(successMessage);
                     return successMessage;
                 })
-                .orElseThrow(() -> {
-                    String errorMessage = String.format(USER_WITH_THIS_ID_NOT_FOUND, id);
-                    logger.error(errorMessage);
-                    return new NoSuchUserException(errorMessage);
-                });
+                .orElseThrow(() -> new NoSuchUserException(String.format(USER_WITH_THIS_ID_NOT_FOUND, id)));
     }
 }
